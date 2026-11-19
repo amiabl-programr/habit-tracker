@@ -93,6 +93,7 @@
 <div class="controls">
   <button class="btn btn-primary" id="print-btn">Print / Save as PDF</button>
   <button class="btn reset-btn" id="reset-btn">Reset to default</button>
+  <button class="btn btn-success" id="add-row-btn">Add row</button>
   <span class="toggle-btn active" id="ublank-toggle" aria-pressed="true">Unselected cells: Blank</span>
   <span class="toggle-btn inactive" id="ured-toggle" aria-pressed="false">Unselected cells: Red</span>
 </div>
@@ -144,6 +145,7 @@
   const tbody = document.querySelector('#habit-table tbody');
   const printBtn = document.getElementById('print-btn');
   const resetBtn = document.getElementById('reset-btn');
+  const addRowBtn = document.getElementById('add-row-btn');
   const ublankToggle = document.getElementById('ublank-toggle');
   const uredToggle = document.getElementById('ured-toggle');
   const titleDisplay = document.getElementById('title-display');
@@ -207,7 +209,7 @@
     let tbodyHTML = '';
     state.habits.forEach((h, ridx) => {
       tbodyHTML += `<tr>
-        <td class="habit-cell habit-col" contenteditable="true" onblur="saveHabitName(this, ${ridx})" onkeypress="if(event.key==='Enter'){event.preventDefault();saveHabitName(this,${ridx})}">${h.name}</td>`;
+        <td class="habit-cell habit-col" contenteditable="true" onblur="saveHabitName(this, ${ridx})" onkeypress="if(event.key==='Enter'){event.preventDefault();saveHabitName(this,${ridx})}">${h.name} <button class="btn btn-danger btn-sm" onclick="deleteRow(${ridx})">×</button></td>`;
       h.selected.forEach((s, cid) => {
         const cls = s ? 'cell-selected' : (state.unselectedMode === 'red' ? 'cell-unred' : '');
         const mark = s ? '✔️' : (state.unselectedMode === 'red' ? '❌' : '');
@@ -363,6 +365,11 @@
       addSelectionHighlight();
       saveState();
     }
+  });
+
+  // ---- Add row ----
+  addRowBtn.addEventListener('click', () => {
+    addRow();
   });
 
   // ---- Init ----
