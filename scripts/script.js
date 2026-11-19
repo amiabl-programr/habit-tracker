@@ -241,6 +241,22 @@ function saveHabitName(el, ridx) {
   }
 }
 
+// ---- Add selection highlight ----
+// Re-applies the selected/unred classes based on current state
+function addSelectionHighlight() {
+  document.querySelectorAll('#habit-table .day-cell').forEach(el => {
+    const ridx = parseInt(el.dataset.row);
+    const cid = parseInt(el.dataset.col);
+    const s = state.habits[ridx]?.selected?.[cid] ?? false;
+    el.classList.remove('cell-selected', 'cell-unred');
+    if (s) {
+      el.classList.add('cell-selected');
+    } else if (state.unselectedMode === 'red') {
+      el.classList.add('cell-unred');
+    }
+  });
+}
+
 // ---- Unselected mode toggles ----
 ublankToggle.addEventListener('click', () => {
   setUnselectedMode('blank');
