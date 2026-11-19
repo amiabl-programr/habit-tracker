@@ -241,6 +241,15 @@ function saveHabitName(el, ridx) {
   }
 }
 
+// ---- Unselected mode toggles ----
+ublankToggle.addEventListener('click', () => {
+  setUnselectedMode('blank');
+});
+
+uredToggle.addEventListener('click', () => {
+  setUnselectedMode('red');
+});
+
 // ---- Print ----
 printBtn.addEventListener('click', () => {
   window.print();
