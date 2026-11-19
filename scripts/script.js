@@ -92,7 +92,7 @@ function renderTable() {
     h.selected.forEach((s, cid) => {
       const cls = s ? 'cell-selected' : '';
       // No mark here - use CSS ::after instead to avoid double ticks
-      cellsHTML += `<td class="day-cell ${cls}" data-row="${ridx}" data-col="${cid}" tabindex="0" role="button" aria-pressed="${s}"></td>`;
+      cellsHTML += `<td class="day-cell ${cls}" data-row="${ridx}" data-col="${cid}" tabindex="0" role="button" aria-pressed="${s}" onclick="toggleCell(this, ${ridx}, ${cid})"></td>`;
     });
     // Habit cell with delete button
     tbodyHTML += `<tr>
@@ -115,25 +115,37 @@ function toggleCell(el, ridx, cid) {
   addSelectionHighlight();
 }
 
-// ---- Drag selection ----
+// ---- Drag selection (event delegation: works after every re-render) ----
 let dragStart = null;
-document.querySelectorAll('#habit-table .day-cell').forEach(el => {
-  el.addEventListener('mousedown', e => {
-    if (e.target.classList.contains('day-cell')) {
-      dragStart = { row: parseInt(e.target.dataset.row), col: parseInt(e.target.dataset.col) };
-      e.target.focus();
-    }
-  });
+
+tbody.addEventListener('mousedown', e => {
+  const cell = e.target.closest('.day-cell');
+  if (cell) {
+    dragStart = { row: parseInt(cell.dataset.row), col: parseInt(cell.dataset.col) };
+    cell.focus();
+  }
 });
 
-document.addEventListener('mouseup', e => {
-  if (dragStart) {
-    const target = e.target.closest('.day-cell');
-    const endRow = parseInt(target?.dataset.row ?? dragStart.row);
-    const endCol = parseInt(target?.dataset.col ?? dragStart.col);
-    dragSelection(dragStart.row, dragStart.col, endRow, endCol);
-    dragStart = null;
-  }
+tbody.addEventListener('mouseover', e => {
+  if (!dragStart) return;
+  const cell = e.target.closest('.day-cell');
+  if (!cell) return;
+  const endRow = parseInt(cell.dataset.row);
+  const endCol = parseInt(cell.dataset.col);
+  if (endRow === dragStart.row && endCol === dragStart.col) return;
+  dragSelection(dragStart.row, dragStart.col, endRow, endCol);
+});
+
+document.addEventListener('mouseup', () => {
+  dragStart = null;
+});
+
+// ---- Keyboard support (Space / Enter) ----
+tbody.addEventListener('keydown', e => {
+  const cell = e.target.closest('.day-cell');
+  if (!cell || (e.key !== ' ' && e.key !== 'Enter')) return;
+  e.preventDefault();
+  toggleCell(cell, parseInt(cell.dataset.row), parseInt(cell.dataset.col));
 });
 
 function dragSelection(r1, c1, r2, c2) {
