@@ -37,13 +37,9 @@ h1 { margin: 0 0 10px; font-size: 1.4rem; }
 
 /* Controls */
 .controls { margin-bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.btn, .toggle-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
-.btn:hover, .toggle-btn:hover { border-color: #a0a0a0; }
-.btn:active { transform: translateY(1px); }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
+.btn:hover { border-color: #a0a0a0; }
 .btn-primary { border-color: #007bff; color: #007bff; }
-.toggle-btn { gap: 4px; padding: 4px 8px; font-size: 0.8rem; }
-.toggle-btn.active { background: var(--green); color: white; border-color: var(--green); }
-.toggle-btn.inactive { background: var(--red); color: white; border-color: var(--red); }
 .reset-btn { border-color: #6c757d; color: #6c757d; }
 
 /* Table */
@@ -65,13 +61,11 @@ h1 { margin: 0 0 10px; font-size: 1.4rem; }
 /* Cell selected state */
 .cell-selected { background: #d4edda !important; color: var(--green) !important; }
 .cell-selected::after { content: "✔️"; font-size: 1rem; line-height: 1; }
-.cell-unred { color: var(--red) !important; background: #f8d7da !important; }
-.cell-unred::after { content: "❌"; font-size: 1rem; line-height: 1; }
-.cell-selected, .cell-unred { user-select: none; }
+.cell-selected { user-select: none; }
 
 /* Print CSS */
 @media print {
-  .controls, .toggle-panel, #reset-btn { display: none !important; }
+  .controls { display: none !important; }
   body { margin: 0; padding: 0; }
   #habit-table { margin: 0; font-size: 7pt; }
   #habit-table thead { background: #fff; }
@@ -85,4 +79,3 @@ h1 { margin: 0 0 10px; font-size: 1.4rem; }
 
 /* Button press animation */
 .btn:active { transform: scale(0.98); transition: transform 0.1s; }
-.toggle-btn:active { transform: scale(0.96); transition: transform 0.1s; }

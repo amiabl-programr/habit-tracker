@@ -18,7 +18,6 @@ const DEFAULT_HABITS = [
 
 let state = {
   habits: [],
-  unselectedMode: 'blank',
   title: 'Habit Tracker'
 };
 
@@ -29,8 +28,6 @@ const tbody = document.querySelector('#habit-table tbody');
 const printBtn = document.getElementById('print-btn');
 const resetBtn = document.getElementById('reset-btn');
 const addRowBtn = document.getElementById('add-row-btn');
-const ublankToggle = document.getElementById('ublank-toggle');
-const uredToggle = document.getElementById('ured-toggle');
 const titleDisplay = document.getElementById('title-display');
 
 // ---- Init / localStorage ----
@@ -41,14 +38,13 @@ function loadState() {
       const parsed = JSON.parse(saved);
       state = { ...state, ...parsed };
       if (state.habits === undefined || state.habits.length === 0) state.habits = initDefaultHabits();
-      if (state.unselectedMode === undefined) state.unselectedMode = 'blank';
       if (state.title === undefined) state.title = 'Habit Tracker';
+      delete state.unselectedMode;
     } catch { state = initDefault(); }
   } else {
     state = initDefault();
   }
   applyTitle();
-  updateToggleUI();
   renderTable();
   addSelectionHighlight();
 }
@@ -58,7 +54,7 @@ function initDefault() {
     name,
     selected: [false, false, false, false, false, false, false]
   }));
-  return { habits, unselectedMode: 'blank', title: 'Habit Tracker' };
+  return { habits, title: 'Habit Tracker' };
 }
 
 function initDefaultHabits() {
@@ -94,7 +90,7 @@ function renderTable() {
     // Build day cells - no mark in innerHTML, rely on CSS ::after
     let cellsHTML = '';
     h.selected.forEach((s, cid) => {
-      const cls = s ? 'cell-selected' : (state.unselectedMode === 'red' ? 'cell-unred' : '');
+      const cls = s ? 'cell-selected' : '';
       // No mark here - use CSS ::after instead to avoid double ticks
       cellsHTML += `<td class="day-cell ${cls}" data-row="${ridx}" data-col="${cid}" tabindex="0" role="button" aria-pressed="${s}"></td>`;
     });
@@ -167,32 +163,6 @@ function clearAll() {
   addSelectionHighlight();
 }
 
-// ---- Unselected mode toggle ----
-function setUnselectedMode(mode) {
-  state.unselectedMode = mode;
-  renderTable();
-  updateToggleUI();
-  saveState();
-}
-
-function updateToggleUI() {
-  if (state.unselectedMode === 'red') {
-    uredToggle.classList.add('active');
-    uredToggle.classList.remove('inactive');
-    uredToggle.setAttribute('aria-pressed', 'true');
-    ublankToggle.classList.remove('active');
-    ublankToggle.classList.add('inactive');
-    ublankToggle.setAttribute('aria-pressed', 'false');
-  } else {
-    ublankToggle.classList.add('active');
-    ublankToggle.classList.remove('inactive');
-    ublankToggle.setAttribute('aria-pressed', 'true');
-    uredToggle.classList.remove('active');
-    uredToggle.classList.add('inactive');
-    uredToggle.setAttribute('aria-pressed', 'false');
-  }
-}
-
 // ---- Add row ----
 function addRow() {
   state.habits.push({
@@ -242,29 +212,18 @@ function saveHabitName(el, ridx) {
 }
 
 // ---- Add selection highlight ----
-// Re-applies the selected/unred classes based on current state
+// Re-applies the selected class so ticks stay green
 function addSelectionHighlight() {
   document.querySelectorAll('#habit-table .day-cell').forEach(el => {
     const ridx = parseInt(el.dataset.row);
     const cid = parseInt(el.dataset.col);
     const s = state.habits[ridx]?.selected?.[cid] ?? false;
-    el.classList.remove('cell-selected', 'cell-unred');
+    el.classList.remove('cell-selected');
     if (s) {
       el.classList.add('cell-selected');
-    } else if (state.unselectedMode === 'red') {
-      el.classList.add('cell-unred');
     }
   });
 }
-
-// ---- Unselected mode toggles ----
-ublankToggle.addEventListener('click', () => {
-  setUnselectedMode('blank');
-});
-
-uredToggle.addEventListener('click', () => {
-  setUnselectedMode('red');
-});
 
 // ---- Print ----
 printBtn.addEventListener('click', () => {
