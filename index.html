@@ -22,6 +22,7 @@
     color: var(--text);
     margin: 0;
     padding: 20px;
+    overflow-x: hidden; /* prevent double scroll */
   }
 
   h1 { margin: 0 0 10px; font-size: 1.4rem; }
@@ -53,7 +54,14 @@
   .reset-btn { border-color: #6c757d; color: #6c757d; }
 
   /* Table */
-  #habit-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.8rem; }
+#habit-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    overflow-x: auto; /* horizontal scroll on small screens */
+    -webkit-overflow-scrolling: touch; /* smooth scroll on iOS */
+  }
   #habit-table thead { position: sticky; top: 0; background: var(--table-header); z-index: 10; }
   #habit-table th, #habit-table td { border: 1px solid var(--border); padding: 6px 4px; text-align: center; vertical-align: middle; }
   #habit-table th { background: var(--table-header); font-weight: 600; font-size: 0.7rem; user-select: none; }
